@@ -1,0 +1,18 @@
+version: "3"
+
+x-common: &common
+    # ports:
+    #     - 5353:5353
+    network_mode: host
+    command: -p 5353 --enable-relay --provider
+
+services:
+    third-image:
+        <<: *common
+        image: erriy/third
+
+    third-build:
+        <<: *common
+        build:
+            context: .
+            dockerfile: dockerfile

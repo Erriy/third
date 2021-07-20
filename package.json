@@ -1,0 +1,54 @@
+{
+  "name": "third",
+  "author": "erriy <erriy@msn.com>",
+  "version": "0.0.1",
+  "license": "MIT",
+  "homepage": "https://github.com/Erriy/third#readme",
+  "bugs": {
+    "url": "https://github.com/Erriy/third/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Erriy/third.git"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "lint:staged": "lint-staged",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "@commitlint/config-angular": "^12.1.4",
+    "@types/mocha": "^8.2.2",
+    "babel-eslint": "^10.1.0",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "commitizen": "^4.2.4",
+    "commitlint": "^12.1.4",
+    "conventional-changelog-cli": "^2.1.1",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.28.0",
+    "eslint-plugin-mocha": "^9.0.0",
+    "lint-staged": "^11.0.0",
+    "mocha": "^9.0.0",
+    "prettier": "^2.3.1",
+    "yorkie": "^2.0.0"
+  },
+  "gitHooks": {
+    "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+    "commit-msg": "commitlint -E GIT_PARAMS",
+    "pre-commit": "npm run lint:staged",
+    "post-commit": "node script/post-commit.js"
+  },
+  "lint-staged": {
+    "*.js": "eslint --fix",
+    "*.{css,json,md}": "prettier --write"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

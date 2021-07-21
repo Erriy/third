@@ -5,4 +5,5 @@ const program = new Command();
 program
     .addCommand(require('./service'))
     .addCommand(require('./key'))
+    .addCommand(require('./relay'))
     .parse();

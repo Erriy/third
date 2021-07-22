@@ -14,6 +14,7 @@ cmd
     .requiredOption('-p, --port <number>', '指定端口')
     .requiredOption('-r, --relay <string>', '指定中继服务器')
     .action(async (opts) => {
+        // todo 默认暴露代理地址到kns，可以通过选项禁止
         await driver.init();
         await driver.relay.create(opts.port, opts.relay);
     });

@@ -9,7 +9,14 @@ cmd
     .option('-t, --type <string>', '消息类型', undefined)
     .action(async (opts) => {
         await driver.init();
-        console.log(await driver.message.send(opts.to, opts.message, opts.type));
+        const r = await driver.message.send(opts.to, opts.message, opts.type);
+        if(200 === r.code) {
+            console.log(r.message);
+        }
+        else {
+            console.error(r.message);
+            process.exit(-1);
+        }
     });
 
 module.exports = cmd;

@@ -7,4 +7,5 @@ program
     .addCommand(require('./key'))
     .addCommand(require('./relay'))
     .addCommand(require('./lookup'))
+    .addCommand(require('./message'))
     .parse();

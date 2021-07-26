@@ -8,5 +8,5 @@ program
     .addCommand(require('./relay'))
     .addCommand(require('./lookup'))
     .addCommand(require('./message'))
-    .addCommand(require('./login'))
+    .addCommand(require('./account'))
     .parse();

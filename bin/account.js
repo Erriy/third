@@ -260,8 +260,9 @@ cmd
             return;
         }
         else {
-            console.log('账户指纹:\t', r.fingerprint.replace(/(.{4})/g, '$1 '));
-            console.log('账户下的设备指纹：');
+            console.log('\t    ===账户指纹===');
+            console.log('  ',r.fingerprint.replace(/(.{4})/g, '$1 '));
+            console.log('\t===账户下的设备指纹===');
             r.object.device.forEach((df, i)=>{
                 console.log(i, '=>', df.replace(/(.{4})/g, '$1 '));
             });

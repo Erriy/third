@@ -138,12 +138,7 @@ async function login_request (fingerprint) {
     }
 }
 
-async function publish (fingerprint, pubkey, old_ticket_object, new_device_fingerprint) {
-    // todo 设置expire字段
-    // todo 重新生成ticket并托管ticket
-    const ticket = old_ticket_object || {};
-    ticket.device = ticket.device || [];
-
+async function publish (fingerprint, pubkey, devices, ticket_object) {
     const gpg_sign = async (text)=>{
         return new Promise((resolve, reject) => {
             gpg.clearsign(
@@ -159,24 +154,27 @@ async function publish (fingerprint, pubkey, old_ticket_object, new_device_finge
         });
     };
 
-    // 签名新的device
-    ticket.device.push(new_device_fingerprint);
-    ticket.device = Array.from(new Set(ticket.device));
     const new_ticket = {
         pubkey,
-        signed: await gpg_sign(JSON.stringify(ticket))
+        signed: await gpg_sign(JSON.stringify(ticket_object))
     };
+
     // 托管账户ticket
     await driver.account.set_ticket(new_ticket);
-    // 推送到其他客户端
-    await Promise.all(ticket.device.map(async fpr=>{
+    const this_fpr = await driver.key.fingerprint();
+    // 推送到其他客户端，包括删除的终端和新增的终端
+    await Promise.all(devices.map(async fpr=>{
+        if(fpr === this_fpr) {
+            return;
+        }
+
         const d = await driver.ticket.lookup(fpr);
         if(!d || !d.service || !d.service.third) {
             return;
         }
         await axios.put(urljoin(d.service.third, 'api/account/ticket'), new_ticket);
     }));
-
+    
     return new_ticket;
 }
 
@@ -214,7 +212,11 @@ cmd
         // 本机具有签发能力
         else {
             // 创建ticket并发布到ticket网络和下属主机
-            await publish(d.fingerprint, d.pubkey, ticket_object, await device_keyid());
+            const ticket = ticket_object || {};
+            ticket.device = ticket.device || [];
+            ticket.device.push(await device_keyid());
+            ticket.device = Array.from(new Set(ticket.device));
+            await publish(d.fingerprint, d.pubkey, ticket.device, ticket);
         }
 
     });
@@ -247,7 +249,11 @@ cmd
             pageSize: 4,
         }).then(async answer=>{
             const r = await driver.account.get_object();
-            await publish(r.fingerprint, r.pubkey, r.object, answer.fingerprint.replace(/ /g, ''));
+            const ticket = r.object || {};
+            ticket.device = ticket.device || [];
+            ticket.device.push(answer.fingerprint.replace(/ /g, ''));
+            ticket.device = Array.from(new Set(ticket.device));
+            await publish(r.fingerprint, r.pubkey, ticket.device, ticket);
         });
     });
 
@@ -260,13 +266,49 @@ cmd
             return;
         }
         else {
+            const thisfpr = await driver.key.fingerprint();
             console.log('\t    ===账户指纹===');
             console.log('  ',r.fingerprint.replace(/(.{4})/g, '$1 '));
             console.log('\t===账户下的设备指纹===');
             r.object.device.forEach((df, i)=>{
-                console.log(i, '=>', df.replace(/(.{4})/g, '$1 '));
+                console.log(i, '=>', df.replace(/(.{4})/g, '$1 '), thisfpr === df ? '<=本机指纹' : '');
             });
         }
+    });
+
+cmd
+    .command('remove')
+    .action(async ()=>{
+        await driver.init();
+        const r = await driver.account.get_object();
+
+        function search_fingerprint (input) {
+            input = input || '';
+            return new Promise((resolve, reject) => {
+                resolve(fuzzy.filter(input, r.object.device).map(el=>el.original.replace(/(.{4})/g, '$1 ')));
+            });
+        }
+
+        inquirer.prompt({
+            type     : 'autocomplete',
+            name     : 'fingerprint',
+            message  : '请选择要退出的终端指纹',
+            emptyText: '找不到结果',
+            source   : (answers, input) => {
+                return search_fingerprint(input);
+            },
+            pageSize: 4,
+        }).then(async answer=>{
+            const ticket = r.object || {};
+            const devices = [];
+            ticket.device = ticket.device || [];
+            for(let d of ticket.device) {
+                devices.push(d);
+            }
+            ticket.device.splice(ticket.device.indexOf(answer.fingerprint.replace(/ /g, '')), 1);
+            ticket.device = Array.from(new Set(ticket.device));
+            await publish(r.fingerprint, r.pubkey, devices, ticket);
+        });
     });
 
 module.exports = cmd;

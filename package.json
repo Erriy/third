@@ -1,7 +1,7 @@
 {
   "name": "third",
   "author": "erriy <erriy@msn.com>",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "homepage": "https://github.com/Erriy/third#readme",
   "bugs": {
@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "clipboardy": "^2.3.0",
     "command-exists": "^1.2.9",
     "commander": "^7.2.0",
     "concat-stream": "^2.0.0",

@@ -61,7 +61,6 @@
     "clipboardy": "^2.3.0",
     "command-exists": "^1.2.9",
     "commander": "^7.2.0",
-    "concat-stream": "^2.0.0",
     "default-gateway": "^6.0.3",
     "exit-hook": "^2.2.1",
     "express": "^4.17.1",

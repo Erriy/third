@@ -7,4 +7,4 @@ services:
             dockerfile: dockerfile
         ports:
             - 5353:5353
-        command: service -p 5353 --disable-clipboard
+        command: service -p 5353 --enable-relay

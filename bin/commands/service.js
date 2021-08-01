@@ -14,6 +14,9 @@ cmd
         if(opts.enableRelay) {
             enable_services.push('relay');
         }
+        if(opts.relay && !opts.relay.endsWith('/')) {
+            opts.relay += '/';
+        }
         await service.start({
             root     : opts.root,
             port     : opts.port,

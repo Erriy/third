@@ -10,7 +10,7 @@ cmd
     .option('-r, --relay <string>', '指定中继服务器', 'http://third.on1y.net:5353')
     .option('--enable-relay', '启动relay服务', false)
     .action(async (opts) => {
-        const enable_services = ['api', 'local'];
+        const enable_services = ['api', 'admin'];
         if(opts.enableRelay) {
             enable_services.push('relay');
         }

@@ -13,10 +13,14 @@ fs
 
 // todo 本地服务支持unix socket连接，本地即可不用指定端口
 program
-    .option('-p, --port <number>', '指定本地服务的端口', 34105)
+    .option('-h, --host <string>', '指定服务主机', '127.0.0.1')
+    .option('-p, --port <number>', '指定服务的端口', 34105)
     .enablePositionalOptions()
     .hook('preAction', async (thisCommand, actionCommand) => {
-        await driver.init({port: thisCommand.opts().port});
+        await driver.init({
+            port: thisCommand.opts().port,
+            host: thisCommand.opts().host
+        });
     });
 
 program

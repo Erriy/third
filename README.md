@@ -3,6 +3,16 @@
 
 服务器仅存储公开以及需要中转的加密数据，所有其他逻辑均在客户端
 
+
+``` jsonc
+// ticket 携带内容格式
+{
+  "expire": "...", // 指定ticket过期时间，不指定则为创建后5分钟过期
+  "device": [], // 账户下的设备，可以不指定，则通过service字段的服务地址进行查询
+  "service": "http://xxxxx", // third 服务地址
+  "provider": false, // 是否提供ticket查询服务，不指定则为false
+}
+```
 ## 原理
 
 ### 必要的pgp知识

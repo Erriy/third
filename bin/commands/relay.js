@@ -2,6 +2,7 @@ const { Command } = require('commander');
 const cmd = new Command('relay');
 const {driver} = require('../../lib');
 
+// fixme 格式化输出
 cmd
     .command('create')
     .argument('<port>', '指定要映射的端口')
@@ -20,13 +21,6 @@ cmd
     });
 
 cmd
-    .command('list')
-    .action(async ()=>{
-        const r = await driver.relay.list();
-        console.log(r);
-    });
-
-cmd
     .command('get')
     .argument('<port>', '指定要映射的端口')
     .action(async (port)=>{
@@ -39,5 +33,10 @@ cmd
             process.exit(-1);
         }
     });
+
+cmd.action(async ()=>{
+    const r = await driver.relay.list();
+    console.log(r);
+});
 
 module.exports = cmd;

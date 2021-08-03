@@ -54,7 +54,8 @@ cmd
 cmd
     .command('allow')
     .action(async ()=>{
-
+        const r = await driver.account.requests();
+        console.log(r);
     });
 
 cmd

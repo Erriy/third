@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/Erriy/third.git"
   },
-  "bin": "bin/cli.js",
+  "bin": "bin/index.js",
   "main": "lib/index.js",
   "files": [
     "bin",

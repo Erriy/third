@@ -67,7 +67,14 @@ cmd
 cmd
     .command('remove')
     .action(async ()=>{
-
+        let r = await driver.account.device.list();
+        if(r.list.length === 0) {
+            console.error('没有设备');
+            process.exit(-1);
+        }
+        const fpr = await select_fingerprint(r.list);
+        r = await driver.account.device.remove(fpr);
+        console.log(r);
     });
 
 module.exports = cmd;

@@ -54,7 +54,13 @@ cmd
 cmd
     .command('allow')
     .action(async ()=>{
-        const r = await driver.account.requests();
+        let r = await driver.account.requests();
+        if(r.list.length === 0) {
+            console.error('没有登录请求');
+            process.exit(-1);
+        }
+        const fpr = await select_fingerprint(r.list);
+        r = await driver.account.device.add(fpr);
         console.log(r);
     });
 

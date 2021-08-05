@@ -44,7 +44,6 @@ function read_clipboard () {
     else {
         obj.type = type;
         obj.data = data;
-        console.log(obj.data);
         return true;
     }
 }

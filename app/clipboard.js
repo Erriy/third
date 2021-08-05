@@ -29,7 +29,13 @@ function listen_clipboard_change () {
 
 function init () {
     service.routine.message.on('clipboard', msg => {
-        console.log(msg);
+        // 非信任设备拒绝同步
+        if(-1 === service.routine.account.device.list().indexOf(msg.fingerprint)) return;
+        // 设置剪贴板
+        obj.stop_watching = true;
+        obj.text = msg.data;
+        clipboard.writeText(msg.data);
+        obj.stop_watching = false;
     });
     listen_clipboard_change();
 }

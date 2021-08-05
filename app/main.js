@@ -25,7 +25,9 @@ app.on('ready', ()=>{
 
     command(process.argv).then(()=>{
         // todo 带命令行启动则不执行
-        app.dock.hide();
+        if(process.platform === 'darwin') {
+            app.dock.hide();
+        }
         clipboard.init();
         init_tray();
     }).catch(()=>{

@@ -16,7 +16,14 @@ function read_clipboard () {
 
     if(-1 !== fl.indexOf('text/uri-list')) {
         type = 'file';
-        data = clipboard.read('public.file-url');
+
+        const getter = {
+            darwin: ()=>(clipboard.read('public.file-url')),
+            win32 : ()=>(clipboard.readBuffer('FileNameW').toString('ucs2'))
+        }[process.platform];
+        if(getter) {
+            data = getter();
+        }
     }
     else if (-1 !== fl.indexOf('text/plain')) {
         type = 'text';
@@ -26,13 +33,20 @@ function read_clipboard () {
         type = 'image';
         data = clipboard.readImage().toPNG().toString();
     }
-
-    if((!obj.type && !obj.data) || (type === obj.type && data === obj.data)) {
+    if((type === obj.type && data === obj.data) || !data) {
         return false;
     }
-    obj.type = type;
-    obj.data = data;
-    return true;
+    else if(obj.type === null && obj.data === null) {
+        obj.type = type;
+        obj.data = data;
+        return false;
+    }
+    else {
+        obj.type = type;
+        obj.data = data;
+        console.log(obj.data);
+        return true;
+    }
 }
 
 function write_clipboard () {
@@ -47,6 +61,7 @@ async function send_to_other_devices () {
     const this_fpr = service.routine.runtime.key.getFingerprint().toUpperCase();
     await Promise.all(service.routine.account.device.list().map(async df=>{
         if(df === this_fpr) return;
+        console.log(obj.data);
         await service.routine.message.send({
             type       : 'clipboard',
             fingerprint: df,

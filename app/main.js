@@ -32,9 +32,37 @@ function create_main_window () {
     obj.win = win;
 }
 
+function create_login_window () {
+    const win = new BrowserWindow({
+        width         : 800,
+        height        : 600,
+        resizable     : false,
+        fullscreenable: false,
+        // visibleOnAllWorkspaces: true,
+        hasShadow     : false,
+        webPreferences: {
+            nodeIntegration : true,
+            contextIsolation: false,
+        }
+    });
+    if(process.env.DEBUG) {
+        win.loadURL('http://localhost:8080');
+        win.webContents.openDevTools();
+    }
+    else {
+        // todo 增加内容
+    }
+}
+
 function init_tray () {
-    obj.tray = new Tray(path.join(__dirname, 'assets/logo_16x16.jpg'));
+    obj.tray = new Tray(path.join(__dirname, '../src/assets/logo_16x16.jpg'));
     const contextMenu = Menu.buildFromTemplate([
+        {
+            label: '账号',
+            click: ()=>{
+                create_login_window();
+            }
+        },
         {
             label: '退出',
             click: ()=>{
@@ -65,7 +93,7 @@ app.on('ready', async ()=>{
         // app.dock.hide();
     }
     init_tray();
-    create_main_window();
+    // create_main_window();
     api.init();
     clipboard.init();
 

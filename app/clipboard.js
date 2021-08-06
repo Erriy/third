@@ -42,7 +42,6 @@ function read_clipboard () {
         return false;
     }
     else {
-        console.log(obj);
         obj.type = type;
         obj.data = data;
         return true;
@@ -61,7 +60,6 @@ async function send_to_other_devices () {
     const this_fpr = service.routine.runtime.key.getFingerprint().toUpperCase();
     await Promise.all(service.routine.account.device.list().map(async df=>{
         if(df === this_fpr) return;
-        console.log(obj.data);
         await service.routine.message.send({
             type       : 'clipboard',
             fingerprint: df,

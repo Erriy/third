@@ -2,7 +2,6 @@ const {app, BrowserWindow, Menu, Tray} = require('electron');
 const path = require('path');
 const {service} = require('../lib');
 const clipboard = require('./clipboard');
-const command = require('../bin');
 const api = require('./api');
 
 const obj = {
@@ -19,12 +18,17 @@ function create_main_window () {
         // visibleOnAllWorkspaces: true,
         hasShadow     : false,
         webPreferences: {
-            nodeIntegration: true,
+            nodeIntegration : true,
             contextIsolation: false,
         }
     });
-    win.loadURL(`file://${__dirname}/view/login.html`);
-    win.webContents.openDevTools();
+    if(process.env.DEBUG) {
+        win.loadURL('http://localhost:8080');
+        win.webContents.openDevTools();
+    }
+    else {
+        // todo 增加内容
+    }
     obj.win = win;
 }
 
@@ -41,20 +45,29 @@ function init_tray () {
     obj.tray.setContextMenu(contextMenu);
 }
 
-app.on('ready', ()=>{
+app.on('ready', async ()=>{
+    try {
 
-    command(process.argv).then(()=>{
-        // todo 带命令行启动则不执行
-        if(process.platform === 'darwin') {
-            // app.dock.hide();
-        }
-        init_tray();
-        create_main_window();
-        api.init();
-        clipboard.init();
-    }).catch(()=>{
+        await service.start({
+            root     : path.join(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'], '.third'),
+            port     : 34105,
+            bootstrap: [],
+            service  : ['api'],
+        });
+    }
+    catch(e) {
+        // todo 提醒端口占用
         app.quit();
-    });
+    }
+
+    // todo 带命令行启动则不执行
+    if(process.platform === 'darwin') {
+        // app.dock.hide();
+    }
+    init_tray();
+    create_main_window();
+    api.init();
+    clipboard.init();
 
     // const win = new BrowserWindow({
     //     width                 : 300,

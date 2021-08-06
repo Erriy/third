@@ -3,7 +3,7 @@
     "es2021": true,
     "commonjs": true,
     "node": true,
-    "browser": true,
+    "browser": true
   },
   "extends": ["eslint:recommended"],
   "parser": "babel-eslint",

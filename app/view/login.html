@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>登陆</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <style type="text/css">
+        body {
+            padding: 0;
+            margin: 0;
+            left: 0;
+            top: 0;
+            position: fixed;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 你的 HTML 代码 -->
+<script src="./api.js"></script>
+<script src="./layui/layui.js"></script>
+
+<div>
+    <input
+        type="text"
+        id=fingerprint
+        autocomplete="off"
+        placeholder="输入要登录的keyid"
+        class="layui-input"
+        onkeyup="if(event.keyCode===13) {login()}"
+    >
+</div>
+
+<script>
+function login() {
+    const input_fpr = document.getElementById('fingerprint');
+    console.log(fpr);
+}
+
+
+</script>
+</body>
+</html>
+
+

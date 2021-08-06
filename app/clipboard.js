@@ -42,6 +42,7 @@ function read_clipboard () {
         return false;
     }
     else {
+        console.log(obj);
         obj.type = type;
         obj.data = data;
         return true;

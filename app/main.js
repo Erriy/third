@@ -93,7 +93,7 @@ app.on('ready', async ()=>{
         // app.dock.hide();
     }
     init_tray();
-    // create_main_window();
+    create_main_window();
     api.init();
     clipboard.init();
 

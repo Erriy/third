@@ -17,8 +17,11 @@ function list_device () {
     return account.device.list();
 }
 
-async function info () {
-    return await account.object;
+function info () {
+    return {
+        fingerprint: account.fingerprint,
+        object     : account.object,
+    };
 }
 
 async function login (fpr) {

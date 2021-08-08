@@ -92,9 +92,6 @@
     "not dead"
   ],
   "_id": "third@0.0.6",
-  "bin": {
-    "third": "bin/index.js"
-  },
   "bugs": {
     "url": "https://github.com/Erriy/third/issues"
   },

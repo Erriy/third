@@ -1,5 +1,5 @@
 const {clipboard} = require('electron');
-const {service} = require('../lib');
+const {routine} = require('../lib');
 
 const obj = {
     stop_watching: false,
@@ -48,19 +48,11 @@ function read_clipboard () {
     }
 }
 
-function write_clipboard () {
-
-    clipboard.writeBuffer(
-        'public.file-url',
-        Buffer.from('file:///Users/erriy/Downloads/Bartender_4_4.1.0__TNT__xclient.info.dmg.zip')
-    );
-}
-
 async function send_to_other_devices () {
-    const this_fpr = service.routine.runtime.key.getFingerprint().toUpperCase();
-    await Promise.all(service.routine.account.device.list().map(async df=>{
+    const this_fpr = routine.runtime.key.getFingerprint().toUpperCase();
+    await Promise.all(routine.account.device.list().map(async df=>{
         if(df === this_fpr) return;
-        await service.routine.message.send({
+        await routine.message.send({
             type       : 'clipboard',
             fingerprint: df,
             data       : {
@@ -81,9 +73,9 @@ function listen_clipboard_change () {
 }
 
 function init () {
-    service.routine.message.on('clipboard', msg => {
+    routine.message.on('clipboard', msg => {
         // 非信任设备拒绝同步
-        if(-1 === service.routine.account.device.list().indexOf(msg.fingerprint)) return;
+        if(-1 === routine.account.device.list().indexOf(msg.fingerprint)) return;
         // 设置剪贴板
         obj.stop_watching = true;
         obj.type = msg.data.type;

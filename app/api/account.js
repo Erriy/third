@@ -1,5 +1,5 @@
-const {service} = require('../../lib');
-const account = service.routine.account;
+const {routine} = require('../../lib');
+const account = routine.account;
 
 async function lookup (keyid) {
     return await account.lookup(keyid);

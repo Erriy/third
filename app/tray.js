@@ -1,6 +1,7 @@
 const {app, BrowserWindow, Menu, Tray, clipboard} = require('electron');
 const path = require('path');
 const {routine} = require('../lib');
+const helper = require('./helper');
 
 const obj = {
     tray: null,
@@ -19,16 +20,30 @@ function create_login_window () {
             contextIsolation: false,
         }
     });
+
+    win.setMenu(Menu.buildFromTemplate([{
+        label  : '视图(&V)',
+        submenu: [
+            {
+                label      : '开发者工具',
+                role       : 'toggledevtools',
+                accelerator: 'Shift+F12'
+            }
+        ]
+    }]));
+
+    win.loadURL(helper.vue_route('/login'));
     if(process.env.DEBUG) {
-        win.loadURL('http://localhost:8080/#login');
         win.webContents.openDevTools();
-    }
-    else {
-        // todo 增加内容
     }
 }
 
 async function refresh () {
+
+    // todo 临时不接受某些终端的同步/不发送给某些终端
+    // todo 打开配置文件
+    // todo 关于，自动更新、手动更新
+    // todo 修改本机名称
     const can_change = await routine.account.authority();
     const thisfpr = routine.runtime.key.getFingerprint().toUpperCase();
 
@@ -98,7 +113,7 @@ async function refresh () {
 }
 
 async function init () {
-    obj.tray = new Tray(path.join(__dirname, '../src/assets/logo_16x16.jpg'));
+    obj.tray = new Tray(path.join(__dirname, './resource/logo_16x16.jpg'));
     await refresh();
     routine.account.on('change', async ()=>{
         await refresh();

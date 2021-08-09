@@ -6,21 +6,57 @@
     "name": "erriy",
     "email": "erriy@msn.com"
   },
+  "build": {
+    "appId": "third",
+    "productName": "third",
+    "artifactName": "${productName}-${version}_${os}_${arch}.${ext}",
+    "linux": {
+      "target": [
+        "zip", "pacman", "AppImage"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": {
+        "arch": [
+          "x64", "arm64"
+        ],
+        "target": "dmg"
+      }
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": true,
+      "runAfterFinish": true
+    },
+    "files": [
+      "dist/css",
+      "dist/fonts",
+      "dist/img",
+      "dist/js",
+      "dist/index.html",
+      "dist/favicon.ico",
+      "app",
+      "lib"
+    ]
+  },
   "scripts": {
     "electron:serve": "cross-env DEBUG=true electron ./app/main.js",
+    "electron:build": "electron-builder",
     "vue:serve": "vue-cli-service serve",
     "vue:build": "vue-cli-service build",
+    "build": "vue-cli-service build && electron-builder",
     "lint": "eslint .",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint:fix": "eslint --fix .",
     "lint:staged": "lint-staged",
     "test": "mocha"
   },
-  "main": "lib/index.js",
-  "files": [
-    "bin",
-    "lib"
-  ],
+  "main": "app/main.js",
   "dependencies": {
     "ant-design-vue": "^1.7.6",
     "axios": "^0.21.1",
@@ -63,6 +99,7 @@
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.2.0",
     "electron": "^13.1.7",
+    "electron-builder": "^22.11.7",
     "eslint": "^7.28.0",
     "eslint-plugin-mocha": "^9.0.0",
     "eslint-plugin-vue": "^6.2.2",

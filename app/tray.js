@@ -107,18 +107,19 @@ async function refresh_request () {
     // 没有管理权限，则直接返回
     if(!await routine.account.authority()) return [];
     // 有管理权限但是没有登录请求，则返回空
-    const requests = await routine.account.request();
+    const requests = await routine.account.request.list();
     if(requests.length === 0) return [];
 
     return [{
         label  : '登录请求',
-        submenu: (await routine.account.request()).map(f=>{
+        submenu: requests.map(f=>{
             return {
                 label  : f.slice(24),
                 submenu: [{
                     label: '允许登录',
                     async click () {
                         await routine.account.device.add(f);
+                        await routine.account.request.remove(f);
                     }
                 }]
             };

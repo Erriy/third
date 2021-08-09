@@ -38,78 +38,90 @@ function create_login_window () {
     }
 }
 
+async function refresh_account () {
+    // 未进行登录操作
+    if(!routine.account.fingerprint) {
+        return [{
+            label: '登录',
+            click: ()=>{
+                create_login_window();
+            }
+        }];
+    }
+    // 等待登录结果
+    return [{
+        label  : (routine.account.fingerprint || '').slice(24) + (routine.account.object ? '(已登录)' : '(请求中)'),
+        submenu: [
+            {
+                label: '复制',
+                click () {
+                    clipboard.writeText(routine.account.fingerprint);
+                }
+            },
+            {
+                label: '退出',
+                click (){
+                    routine.account.logout();
+                }
+            },
+        ]
+    }];
+}
+
+async function refresh_device () {
+    const can_change = await routine.account.authority();
+    const thisfpr = routine.runtime.key.getFingerprint().toUpperCase();
+    return [{
+        label  : '我的设备',
+        visible: routine.account.device.list().length > 0,
+        submenu: routine.account.device.list().map(f=>{
+            return {
+                label  : f.slice(24) + (f === thisfpr ? '(本机)' : ''),
+                submenu: [
+                    {
+                        label  : '删除',
+                        enabled: can_change,
+                        async click () {
+                            await routine.account.device.remove(f);
+                        }
+                    },
+                    {
+                        label: '复制',
+                        click () {
+                            clipboard.writeText(f);
+                        }
+                    },
+                    // todo 给设备发送消息
+                    // {
+                    //     label: '发送',
+                    //     click () {
+                    //     }
+                    // },
+                ]
+            };
+        })
+    }];
+}
+
 async function refresh () {
 
     // todo 临时不接受某些终端的同步/不发送给某些终端
     // todo 打开配置文件
     // todo 关于，自动更新、手动更新
     // todo 修改本机名称
-    const can_change = await routine.account.authority();
-    const thisfpr = routine.runtime.key.getFingerprint().toUpperCase();
 
-    obj.tray.setContextMenu(Menu.buildFromTemplate([
-        {
-            label  : '登录',
-            visible: !routine.account.fingerprint,
-            click  : ()=>{
-                create_login_window();
-            }
-        },
-        {
-            label  : (routine.account.fingerprint || '').slice(24) + (routine.account.object ? '(已登录)' : '(请求中)'),
-            visible: routine.account.fingerprint,
-            submenu: [
-                {
-                    label: '复制',
-                    click () {
-                        clipboard.writeText(routine.account.fingerprint);
-                    }
-                },
-                {
-                    label: '退出',
-                    click (){
-                        // todo 退出登录
-                    }
-                },
-            ]
-        },
-        {
-            label  : '所有设备',
-            visible: routine.account.device.list().length > 0,
-            submenu: routine.account.device.list().map(f=>{
-                return {
-                    label  : f.slice(24) + (f === thisfpr ? '(本机)' : ''),
-                    submenu: [
-                        {
-                            label  : '删除',
-                            enabled: can_change,
-                            async click () {
-                                await routine.account.device.remove(f);
-                            }
-                        },
-                        {
-                            label: '复制',
-                            click () {
-                                clipboard.writeText(f);
-                            }
-                        },
-                        // todo 给设备发送消息
-                        // {
-                        //     label: '发送',
-                        //     click () {
-                        //     }
-                        // },
-                    ]
-                };
-            })
-        },
+    const template = [
+        ... await refresh_account(),
+        ... await refresh_device(),
         {
             label: '退出',
             click: ()=>{
                 app.quit();
             }
         }
-    ]));
+    ];
+
+    obj.tray.setContextMenu(Menu.buildFromTemplate(template));
 }
 
 async function init () {

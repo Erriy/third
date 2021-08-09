@@ -1,13 +1,13 @@
 {
   "name": "third",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": true,
   "author": {
     "name": "erriy",
     "email": "erriy@msn.com"
   },
   "build": {
-    "appId": "third",
+    "appId": "net.on1y.third",
     "productName": "third",
     "artifactName": "${productName}-${version}_${os}_${arch}.${ext}",
     "linux": {

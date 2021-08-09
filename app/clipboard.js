@@ -75,7 +75,7 @@ function listen_clipboard_change () {
 function init () {
     routine.message.on('clipboard', msg => {
         // 非信任设备拒绝同步
-        if(-1 === routine.account.device.list().indexOf(msg.fingerprint)) return;
+        if(-1 === routine.account.device.list().indexOf(msg.from)) return;
         // 设置剪贴板
         obj.stop_watching = true;
         obj.type = msg.data.type;

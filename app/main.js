@@ -1,19 +1,13 @@
 const {app, dialog} = require('electron');
-const path = require('path');
 const service = require('../lib');
 const clipboard = require('./clipboard');
 const api = require('./api');
 const tray = require('./tray');
+const helper = require('./helper');
 
 app.on('ready', ()=>{
     service.start({
-        root: path.join(
-            process.env[
-                (process.platform == 'win32') ?
-                    'USERPROFILE' :
-                    'HOME'
-            ],
-            '.third'),
+        root     : helper.root,
         port     : 34105,
         bootstrap: [],
         service  : ['api'],

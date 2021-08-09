@@ -103,6 +103,29 @@ async function refresh_device () {
     }];
 }
 
+async function refresh_request () {
+    // 没有管理权限，则直接返回
+    if(!await routine.account.authority()) return [];
+    // 有管理权限但是没有登录请求，则返回空
+    const requests = await routine.account.request();
+    if(requests.length === 0) return [];
+
+    return [{
+        label  : '登录请求',
+        submenu: (await routine.account.request()).map(f=>{
+            return {
+                label  : f.slice(24),
+                submenu: [{
+                    label: '允许登录',
+                    async click () {
+                        await routine.account.device.add(f);
+                    }
+                }]
+            };
+        })
+    }];
+}
+
 async function refresh () {
 
     // todo 临时不接受某些终端的同步/不发送给某些终端
@@ -113,6 +136,7 @@ async function refresh () {
     const template = [
         ... await refresh_account(),
         ... await refresh_device(),
+        ... await refresh_request(),
         {
             label: '退出',
             click: ()=>{
@@ -127,6 +151,10 @@ async function refresh () {
 async function init () {
     obj.tray = new Tray(path.join(__dirname, './resource/logo_16x16.jpg'));
     await refresh();
+    obj.tray.on('click', ()=>{
+        obj.tray.popUpContextMenu();
+    });
+
     routine.account.on('change', async ()=>{
         await refresh();
     });

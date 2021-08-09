@@ -23,7 +23,7 @@
     "mac": {
       "target": {
         "arch": [
-          "x64", "arm64"
+          "x64"
         ],
         "target": "dmg"
       }
@@ -50,6 +50,7 @@
     "vue:serve": "vue-cli-service serve",
     "vue:build": "vue-cli-service build",
     "build": "vue-cli-service build && electron-builder",
+    "build:mac:arm64": "vue-cli-service build && electron-builder --mac --arm64 -c.mac.identity=null",
     "lint": "eslint .",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint:fix": "eslint --fix .",

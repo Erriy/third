@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": true,
   "author": {
     "name": "erriy",
@@ -12,7 +12,7 @@
     "artifactName": "${productName}-${version}_${os}_${arch}.${ext}",
     "linux": {
       "target": [
-        "zip", "pacman", "AppImage"
+        "AppImage"
       ]
     },
     "win": {

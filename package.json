@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "private": true,
   "author": {
     "name": "erriy",
@@ -25,9 +25,7 @@
         "arch": [
           "x64", "arm64"
         ],
-        "target": [
-          "dmg", "zip"
-        ]
+        "target": "zip"
       }
     },
     "nsis": {

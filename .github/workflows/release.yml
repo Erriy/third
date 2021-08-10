@@ -24,7 +24,7 @@ jobs:
           registry-url: 'https://registry.npmjs.com'
 
       - name: build and release application
-        run: npm i && npm run build -- -p onTag
+        run: npm i && npm run build -- -p always
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
 

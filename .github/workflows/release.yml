@@ -25,8 +25,8 @@ jobs:
 
       - name: build and release application
         run: npm i && npm run build
-        with:
-          GH_TOKEN: ${{ secrets.github_token }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
 
 
 

@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.0.24",
+  "version": "0.0.23",
   "private": true,
   "author": {
     "name": "erriy",
@@ -50,7 +50,7 @@
     "vue:serve": "vue-cli-service serve",
     "vue:build": "vue-cli-service build",
     "build": "vue-cli-service build && electron-builder",
-    "build:mac": "vue-cli-service build && electron-builder --mac -c.mac.identity=null",
+    "build:mac": "vue-cli-service build && electron-builder --mac",
     "lint": "eslint .",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint:fix": "eslint --fix .",

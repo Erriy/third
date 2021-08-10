@@ -143,9 +143,16 @@ async function refresh () {
             label  : '关于',
             submenu: [
                 {
-                    label: '检查更新',
-                    click () {
-                        update.check();
+                    label : '检查更新',
+                    enable: true,
+                    async click (i) {
+                        i.enable = false;
+                        try {
+                            await update.check();
+                        }
+                        finally {
+                            i.enable = true;
+                        }
                     }
                 },
                 {

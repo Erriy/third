@@ -1,7 +1,8 @@
-const {app, BrowserWindow, Menu, Tray, clipboard} = require('electron');
+const {app, BrowserWindow, Menu, Tray, clipboard, shell} = require('electron');
 const path = require('path');
 const {routine} = require('../lib');
 const helper = require('./helper');
+const update = require('./update');
 
 const obj = {
     tray: null,
@@ -138,6 +139,23 @@ async function refresh () {
         ... await refresh_account(),
         ... await refresh_device(),
         ... await refresh_request(),
+        {
+            label  : '关于',
+            submenu: [
+                {
+                    label: '检查更新',
+                    click () {
+                        update.check();
+                    }
+                },
+                {
+                    label: '项目主页',
+                    click () {
+                        shell.openExternal('https://github.com/erriy/third');
+                    }
+                }
+            ]
+        },
         {
             label: '退出',
             click: ()=>{

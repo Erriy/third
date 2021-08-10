@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "private": true,
   "author": {
     "name": "erriy",
@@ -65,6 +65,7 @@
     "commander": "^8.1.0",
     "core-js": "^3.6.5",
     "default-gateway": "^6.0.3",
+    "electron-updater": "^4.3.9",
     "exit-hook": "^2.2.1",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",

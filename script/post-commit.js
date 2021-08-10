@@ -17,7 +17,7 @@ exec('git show :package.json', (error, stdout, stderr) => {
         console.log('[*] 开始构建 mac arm64 应用');
         const token = fse.readFileSync(github_token_path).toString().replace(/[\r\n]/g, '');
         execSync(
-            `GITHUB_TOKEN=${token} npm run build:mac:arm64 -- -p always`,
+            `GITHUB_TOKEN=${token} npm run build:mac -- -p always`,
             {stdio: [process.stdin, process.stdout, process.stderr]}
         );
     });

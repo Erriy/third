@@ -5,4 +5,3 @@ COPY . /node/
 RUN npm install
 
 ENTRYPOINT [ "node", "bin/cli.js" ]
-

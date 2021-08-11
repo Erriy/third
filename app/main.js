@@ -3,14 +3,16 @@ const service = require('../lib');
 const clipboard = require('./clipboard');
 const api = require('./api');
 const tray = require('./tray');
-const helper = require('./helper');
+const runtime = require('./runtime');
 const update = require('./update');
 
 app.on('ready', ()=>{
+    const c = runtime.config;
     service.start({
-        root     : helper.root,
-        port     : 34105,
-        bootstrap: [],
+        root     : runtime.root,
+        port     : c.get('port'),
+        bootstrap: c.get('bootstrap'),
+        relay    : c.get('relay'),
         service  : ['api'],
     }).then(async ()=>{
         await tray.init();

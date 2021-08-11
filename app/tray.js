@@ -1,7 +1,7 @@
 const {app, BrowserWindow, Menu, Tray, clipboard, shell} = require('electron');
 const path = require('path');
 const {routine} = require('../lib');
-const helper = require('./helper');
+const runtime = require('./runtime');
 const update = require('./update');
 
 const obj = {
@@ -33,7 +33,7 @@ function create_login_window () {
         ]
     }]));
 
-    win.loadURL(helper.vue_route('/login'));
+    win.loadURL(runtime.vue_route('/login'));
     if(process.env.DEBUG) {
         win.webContents.openDevTools();
     }
@@ -131,14 +131,18 @@ async function refresh_request () {
 async function refresh () {
 
     // todo 临时不接受某些终端的同步/不发送给某些终端
-    // todo 打开配置文件
-    // todo 关于，自动更新、手动更新
     // todo 修改本机名称
 
     const template = [
         ... await refresh_account(),
         ... await refresh_device(),
         ... await refresh_request(),
+        {
+            label: '打开配置文件',
+            async click () {
+                await shell.openPath(runtime.config.path);
+            }
+        },
         {
             label  : `关于 (v${app.getVersion()})`,
             submenu: [

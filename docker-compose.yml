@@ -7,4 +7,4 @@ services:
             dockerfile: dockerfile
         ports:
             - 5353:5353
-        command: service -p 5353 --enable-relay
+        command: -p 5353 --enable-relay --provider

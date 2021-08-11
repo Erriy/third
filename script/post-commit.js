@@ -14,7 +14,7 @@ exec('git show :package.json', (error, stdout, stderr) => {
         // 如果家目录下有builder token 则自动构建并推送arm64架构的应用，其他架构使用github action release
         const github_token_path = path.join(process.env.HOME || process.env.USERPROFILE, '.electron_builder_github_token');
         if(!fse.existsSync(github_token_path)) return;
-        console.log('[*] 开始构建 mac arm64 应用');
+        console.log('[*] 开始构建 mac 应用');
         const token = fse.readFileSync(github_token_path).toString().replace(/[\r\n]/g, '');
         execSync(
             `GITHUB_TOKEN=${token} npm run build:mac -- -p always`,

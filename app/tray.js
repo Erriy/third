@@ -3,7 +3,6 @@ const path = require('path');
 const {routine} = require('../lib');
 const helper = require('./helper');
 const update = require('./update');
-const pkginfo = require('../package.json');
 
 const obj = {
     tray: null,
@@ -141,7 +140,7 @@ async function refresh () {
         ... await refresh_device(),
         ... await refresh_request(),
         {
-            label  : `关于 (v${pkginfo.version})`,
+            label  : `关于 (v${app.getVersion()})`,
             submenu: [
                 {
                     label: '项目主页',
@@ -150,16 +149,12 @@ async function refresh () {
                     }
                 },
                 {
-                    label : '检查更新',
-                    enable: true,
-                    async click (i) {
-                        i.enable = false;
+                    label: '检查更新',
+                    async click () {
                         try {
                             await update.check({show_error: true});
                         }
-                        finally {
-                            i.enable = true;
-                        }
+                        catch(e) {}
                     }
                 },
             ]

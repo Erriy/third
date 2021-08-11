@@ -4,6 +4,7 @@ const clipboard = require('./clipboard');
 const api = require('./api');
 const tray = require('./tray');
 const helper = require('./helper');
+const update = require('./update');
 
 app.on('ready', ()=>{
     service.start({
@@ -15,6 +16,7 @@ app.on('ready', ()=>{
         await tray.init();
         api.init();
         clipboard.init();
+        update.init();
     }).catch(e=>{
         dialog.showMessageBox(null, {
             type   : 'error',

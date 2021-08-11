@@ -1,13 +1,17 @@
 const {dialog} = require('electron');
 
-async function messagebox_yesorno (message, e) {
-    console.log(e);
+async function messagebox_yesorno ({
+    title,
+    message,
+}, e) {
     const r = await dialog.showMessageBox({
-        message: message,
-        type   : 'question'
+        title    : title,
+        message  : message,
+        type     : 'info',
+        buttons  : ['确定', '取消'],
+        defaultId: 0,
     });
-    console.log(r);
-    return r;
+    return r.response;
 }
 
 module.exports = {

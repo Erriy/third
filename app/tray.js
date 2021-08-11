@@ -3,6 +3,7 @@ const path = require('path');
 const {routine} = require('../lib');
 const helper = require('./helper');
 const update = require('./update');
+const pkginfo = require('../package.json');
 
 const obj = {
     tray: null,
@@ -140,27 +141,27 @@ async function refresh () {
         ... await refresh_device(),
         ... await refresh_request(),
         {
-            label  : '关于',
+            label  : `关于 (v${pkginfo.version})`,
             submenu: [
+                {
+                    label: '项目主页',
+                    click () {
+                        shell.openExternal('https://github.com/erriy/third');
+                    }
+                },
                 {
                     label : '检查更新',
                     enable: true,
                     async click (i) {
                         i.enable = false;
                         try {
-                            await update.check();
+                            await update.check({show_error: true});
                         }
                         finally {
                             i.enable = true;
                         }
                     }
                 },
-                {
-                    label: '项目主页',
-                    click () {
-                        shell.openExternal('https://github.com/erriy/third');
-                    }
-                }
             ]
         },
         {

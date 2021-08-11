@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "private": true,
   "author": {
     "name": "erriy",
@@ -41,7 +41,8 @@
       "dist/index.html",
       "dist/favicon.ico",
       "app",
-      "lib"
+      "lib",
+      "package.json"
     ]
   },
   "scripts": {

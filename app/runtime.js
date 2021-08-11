@@ -25,10 +25,10 @@ function root () {
 
 function get_config () {
     if(!obj.config.has('bootstrap')) {
-        obj.config.set('bootstrap', ['http://third.on1y.net:34105']);
+        obj.config.set('bootstrap', ['http://third.on1y.net:5353']);
     }
     if(!obj.config.has('relay')) {
-        obj.config.set('relay', 'http://third.on1y.net:34105');
+        obj.config.set('relay', 'http://third.on1y.net:5353');
     }
     if(!obj.config.has('port')) {
         obj.config.set('port', 34105);

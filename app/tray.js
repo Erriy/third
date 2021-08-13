@@ -8,18 +8,50 @@ const obj = {
     tray: null,
 };
 
+function create_login_window () {
+    const win = new BrowserWindow({
+        width         : 300,
+        height        : 60,
+        resizable     : false,
+        fullscreenable: false,
+        // visibleOnAllWorkspaces: true,
+        hasShadow     : false,
+        webPreferences: {
+            nodeIntegration : true,
+            contextIsolation: false,
+        }
+    });
+
+    win.setMenu(Menu.buildFromTemplate([{
+        label  : '视图(&V)',
+        submenu: [
+            {
+                label      : '开发者工具',
+                role       : 'toggledevtools',
+                accelerator: 'Shift+F12'
+            }
+        ]
+    }]));
+
+    win.loadURL(runtime.vue_route('/login'));
+    if(process.env.DEBUG) {
+        win.webContents.openDevTools();
+    }
+}
+
 async function refresh_account () {
     // 未进行登录操作
     if(!engine.account.status.login) {
         return [{
             label: '登录',
             click: ()=>{
+                create_login_window();
             }
         }];
     }
     // 等待登录结果
     return [{
-        label  : engine.account.fingerprint.slice(24) + (engine.account.status.wait ? '(已登录)' : '(请求中)'),
+        label  : engine.account.fingerprint.slice(24) + (engine.account.status.wait ? '(请求中)' : ''),
         submenu: [
             {
                 label: '复制',
@@ -29,8 +61,8 @@ async function refresh_account () {
             },
             {
                 label: '退出',
-                click (){
-                    engine.account.logout();
+                async click (){
+                    await engine.account.logout();
                 }
             },
         ]

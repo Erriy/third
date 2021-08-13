@@ -24,36 +24,34 @@ export default {
         async login(fpr) {
             try {
                 const msg = await this.$api.account.login(fpr) ? '登录成功': '已提交登录请求';
-                this.$message.success(msg, ()=>{window.close();});
+                this.$api.dialog.notify({message: msg});
+                window.close();
             }
             catch(e) {
-                this.$message.error('登录失败');
+                this.$api.dialog.notify({message: '登录失败'});
             }
         },
-        lookup() {
+        async lookup() {
             if(this.disabled || this.loading) return;
             this.disabled = true;
             this.loading = true;
-            this.$api.account.lookup(this.keyid)
-            .then(fprs=>{
-                if(fprs.length < 0) {
-                    return this.$message.warning("找不到指纹，请确认keyid输入正确");
+            try {
+                const fpr = await this.$api.account.lookup(this.keyid);
+                if(!fpr) {
+                    await this.$api.dialog.notify({message: "找不到指纹，请确认keyid输入正确"});
                 }
-                this.$confirm({
-                    title: '请确认指纹正确',
-                    width: '500px',
-                    content: fprs[0].replace(/(.{4})/g, '$1 '),
-                    onOk: async ()=>{
-                        await this.login(fprs[0]);
-                    },
-                    onCancel() {},
+                const r = await this.$api.dialog.yes_or_no({
+                    title: '确认指纹',
+                    message: fpr.replace(/(.{4})/g, '$1 '),
                 });
-            })
-            .finally(() => {
+                if(r) {
+                    await this.login(fpr);
+                }
+            }
+            finally {
                 this.loading = false;
                 this.disabled = false;
-            })
-
+            }
         }
     },
     mounted() {

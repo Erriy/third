@@ -5,6 +5,7 @@ const engine = require('../lib');
 const runtime = require('./runtime');
 const tray = require('./tray');
 const update = require('./update');
+const api = require('./api');
 
 app.on('ready', ()=>{
     const c = runtime.config;
@@ -17,6 +18,7 @@ app.on('ready', ()=>{
         logger   : log,
     }).then(async ()=>{
         tray.init();
+        api.init();
         update.init();
     }).catch(e=>{
         dialog.showMessageBox(null, {

@@ -12,6 +12,7 @@ program
     .option('--enable-relay', '启动relay服务', false)
     .option('--disable-mdns', '禁用mdns内网自发现服务', false)
     .option('--provider', '支持kns存储查询服务', false)
+    .option('--test <fingerprint>')
     .action(async (opts) => {
         await engine.init({
             database: opts.database,
@@ -19,6 +20,20 @@ program
             mdns    : !opts.disableMdns,
             provider: opts.provider,
         });
+
+        console.log(engine.runtime.key.getFingerprint().toUpperCase());
+
+        engine.rpc.handle('ping', async (d)=>{
+            console.log(d);
+            return 'pong';
+        });
+
+        if(opts.test) {
+            setInterval(async ()=>{
+                const r = await engine.rpc.invoke(opts.test, 'ping', 'ping from other side');
+                console.log(r);
+            }, 1000);
+        }
     });
 
 program.parse();

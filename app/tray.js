@@ -9,7 +9,7 @@ const obj = {
 };
 
 function create_login_window () {
-    const win = new BrowserWindow({
+    const config = {
         width                 : 300,
         height                : 300,
         resizable             : false,
@@ -21,7 +21,12 @@ function create_login_window () {
             nodeIntegration : true,
             contextIsolation: false,
         }
-    });
+    };
+    if(process.platform !== 'darwin') {
+        config.frame = false;
+    }
+
+    const win = new BrowserWindow(config);
 
     if(process.platform !== 'darwin') {
         win.setMenu(Menu.buildFromTemplate([{

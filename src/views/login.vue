@@ -40,7 +40,7 @@ export default {
         async login(fpr) {
             try {
                 const msg = await this.$api.account.login(fpr) ? '登录成功': '已提交登录请求';
-                this.$api.dialog.notify({message: msg});
+                await this.$api.dialog.notify({message: msg});
                 this.close();
             }
             catch(e) {

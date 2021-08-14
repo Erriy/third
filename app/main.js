@@ -6,6 +6,7 @@ const runtime = require('./runtime');
 const tray = require('./tray');
 const update = require('./update');
 const api = require('./api');
+const clipboard = require('./clipboard');
 
 app.on('ready', ()=>{
     const c = runtime.config;
@@ -20,6 +21,7 @@ app.on('ready', ()=>{
         tray.init();
         api.init();
         update.init();
+        clipboard.init();
     }).catch(e=>{
         dialog.showMessageBox(null, {
             type   : 'error',

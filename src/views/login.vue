@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-bottom: 16px">
+    <a-card>
         <a-input
             v-model="keyid"
             addon-before="0x"
@@ -8,7 +8,20 @@
             :disabled="disabled"
             @pressEnter="lookup"
         />
-    </div>
+        <div style='margin:15px'></div>
+        <div>
+            <a-button @click='close'>取消</a-button>
+            <a-button
+                style="float: right"
+                type="primary"
+                :loading="loading"
+                :disabled="disabled"
+                @click='lookup'
+            >
+                确定
+            </a-button>
+        </div>
+    </a-card>
 </template>
 
 <script>
@@ -21,11 +34,14 @@ export default {
         }
     },
     methods: {
+        close() {
+            window.close();
+        },
         async login(fpr) {
             try {
                 const msg = await this.$api.account.login(fpr) ? '登录成功': '已提交登录请求';
                 this.$api.dialog.notify({message: msg});
-                window.close();
+                this.close();
             }
             catch(e) {
                 this.$api.dialog.notify({message: '登录失败'});
@@ -55,10 +71,12 @@ export default {
         }
     },
     mounted() {
-    }
+    },
+    beforeCreate () {
+        document.querySelector('body').setAttribute('style', 'background-color:rgb(255, 255, 255, 0)');
+    },
 }
 </script>
 
 <style>
-
 </style>

@@ -10,30 +10,34 @@ const obj = {
 
 function create_login_window () {
     const win = new BrowserWindow({
-        width         : 300,
-        height        : 60,
-        resizable     : false,
-        fullscreenable: false,
-        // visibleOnAllWorkspaces: true,
-        hasShadow     : false,
-        webPreferences: {
+        width                 : 300,
+        height                : 300,
+        resizable             : false,
+        fullscreenable        : false,
+        visibleOnAllWorkspaces: true,
+        hasShadow             : false,
+        transparent           : true,
+        webPreferences        : {
             nodeIntegration : true,
             contextIsolation: false,
         }
     });
 
-    win.setMenu(Menu.buildFromTemplate([{
-        label  : '视图(&V)',
-        submenu: [
-            {
-                label      : '开发者工具',
-                role       : 'toggledevtools',
-                accelerator: 'Shift+F12'
-            }
-        ]
-    }]));
+    if(process.platform !== 'darwin') {
+        win.setMenu(Menu.buildFromTemplate([{
+            label  : '视图(&V)',
+            submenu: [
+                {
+                    label      : '开发者工具',
+                    role       : 'toggledevtools',
+                    accelerator: 'Shift+F12'
+                }
+            ]
+        }]));
+    }
 
     win.loadURL(runtime.vue_route('/login'));
+
     if(process.env.DEBUG) {
         win.webContents.openDevTools();
     }

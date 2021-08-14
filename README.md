@@ -33,6 +33,8 @@
   - [ ] 流畅的发现设备和请求
 - [ ] 直接使用openpgpjs创建账号，提醒不安全
 - [ ] relay 中继测试
+- [ ] clipboard 逻辑优化
+  - [ ] 只在内网中传输，shift+ctrl+v才主动去获取
 
 - [ ] 终端别名
 - [ ] session加密

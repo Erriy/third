@@ -35,6 +35,7 @@ export default {
     },
     methods: {
         close() {
+            // fixme windows 无法关闭
             window.close();
         },
         async login(fpr) {

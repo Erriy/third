@@ -80,16 +80,16 @@ async function refresh_device () {
                 label  : f.slice(24) + (f === thisfpr ? '(本机)' : ''),
                 submenu: [
                     {
+                        label: '复制',
+                        click () {
+                            clipboard.writeText(f);
+                        }
+                    },
+                    {
                         label  : '删除',
                         enabled: can_change,
                         async click () {
                             await engine.account.device.remove(f);
-                        }
-                    },
-                    {
-                        label: '复制',
-                        click () {
-                            clipboard.writeText(f);
                         }
                     },
                     // todo 给设备发送消息

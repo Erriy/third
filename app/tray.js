@@ -74,7 +74,27 @@ async function refresh_device () {
 }
 
 async function refresh_request () {
-    return [];
+    // 没有管理权限，则直接返回
+    if(!await engine.account.have_prikey(engine.account.fingerprint)) return [];
+    // 有管理权限但是没有登录请求，则返回空
+    const requests = await engine.account.request.list();
+    if(requests.length === 0) return [];
+
+    return [{
+        label  : '登录请求',
+        submenu: requests.map(f=>{
+            return {
+                label  : f.slice(24),
+                submenu: [{
+                    label: '允许登录',
+                    async click () {
+                        await engine.account.device.add(f);
+                        await engine.account.request.remove(f);
+                    }
+                }]
+            };
+        })
+    }];
 }
 
 async function refresh () {

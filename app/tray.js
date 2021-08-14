@@ -70,7 +70,38 @@ async function refresh_account () {
 }
 
 async function refresh_device () {
-    return [];
+    const can_change = await engine.account.have_prikey(engine.account.fingerprint);
+    const thisfpr = engine.runtime.key.getFingerprint().toUpperCase();
+    return [{
+        label  : '我的设备',
+        visible: engine.account.device.list().length > 0,
+        submenu: engine.account.device.list().map(f=>{
+            return {
+                label  : f.slice(24) + (f === thisfpr ? '(本机)' : ''),
+                submenu: [
+                    {
+                        label  : '删除',
+                        enabled: can_change,
+                        async click () {
+                            await engine.account.device.remove(f);
+                        }
+                    },
+                    {
+                        label: '复制',
+                        click () {
+                            clipboard.writeText(f);
+                        }
+                    },
+                    // todo 给设备发送消息
+                    // {
+                    //     label: '发送',
+                    //     click () {
+                    //     }
+                    // },
+                ]
+            };
+        })
+    }];
 }
 
 async function refresh_request () {

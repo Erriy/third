@@ -39,11 +39,13 @@ async function send_to_other_devices () {
     const this_fpr = engine.runtime.key.getFingerprint().toUpperCase();
     await Promise.all(engine.account.device.list().map(async df=>{
         if(df === this_fpr) return;
-
-        await engine.rpc.invoke(df, 'third.sync.clipboard', {
-            data: obj.data,
-            type: obj.type
-        });
+        try {
+            await engine.rpc.invoke(df, 'third.sync.clipboard', {
+                data: obj.data,
+                type: obj.type
+            });
+        }
+        catch(e) {}
     }));
 }
 

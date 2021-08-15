@@ -35,8 +35,8 @@ export default {
     },
     methods: {
         close() {
-            // fixme windows 无法关闭
-            window.close();
+            // window.close(); // windows下不知为何无法关闭
+            this.$api.window.close().then();
         },
         async login(fpr) {
             try {

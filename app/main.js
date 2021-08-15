@@ -14,6 +14,7 @@ app.on('ready', ()=>{
         database : path.join(runtime.root, 'third.db'),
         port     : c.get('port'),
         bootstrap: c.get('bootstrap'),
+        relay    : c.get('relay'),
         mdns     : true,
         provider : false,
         logger   : log,
@@ -23,9 +24,9 @@ app.on('ready', ()=>{
         update.init();
         clipboard.init();
     }).catch(e=>{
-        dialog.showMessageBox(null, {
+        dialog.showMessageBox({
             type   : 'error',
-            message: e
+            message: e.message
         });
         app.quit();
     });

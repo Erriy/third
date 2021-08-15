@@ -1,3 +1,11 @@
 node_modules/
 .git/
+.github/
 .vscode/
+app/
+data/
+dist/
+public/
+script/
+src/
+test/

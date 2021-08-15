@@ -6,34 +6,21 @@ const engine = require('../lib');
 
 program
     .option('--database <string>', '指定应用运行时数据库文件位置', path.join(process.env.HOME || process.env.USERPROFILE, '.third/database'))
-    .option('-b, --bootstrap <string...>', '指定启动时连接的服务', 'http://third.on1y.net:5353')
+    .option('-b, --bootstrap <string...>', '指定启动时连接的服务', ['http://third.on1y.net:5353'])
     .option('-r, --relay <string>', '指定中继服务器', null)
     .option('-p, --port <number>', '指定服务端口号', 34105)
     .option('--enable-relay', '启动relay服务', false)
     .option('--disable-mdns', '禁用mdns内网自发现服务', false)
     .option('--provider', '支持kns存储查询服务', false)
-    .option('--test <fingerprint>')
     .action(async (opts) => {
         await engine.init({
-            database: opts.database,
-            port    : opts.port,
-            mdns    : !opts.disableMdns,
-            provider: opts.provider,
+            database    : opts.database,
+            port        : opts.port,
+            mdns        : !opts.disableMdns,
+            bootstrap   : opts.bootstrap,
+            provider    : opts.provider,
+            enable_relay: opts.enableRelay
         });
-
-        console.log(engine.runtime.key.getFingerprint().toUpperCase());
-
-        engine.rpc.handle('ping', async (d)=>{
-            console.log(d);
-            return 'pong';
-        });
-
-        if(opts.test) {
-            setInterval(async ()=>{
-                const r = await engine.rpc.invoke(opts.test, 'ping', 'ping from other side');
-                console.log(r);
-            }, 1000);
-        }
     });
 
 program.parse();

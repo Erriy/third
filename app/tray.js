@@ -86,6 +86,7 @@ async function refresh_device () {
         visible: engine.account.device.list().length > 0,
         submenu: engine.account.device.list().map(f=>{
             return {
+                // todo 显示设备在线状态
                 label  : f.slice(24) + (f === thisfpr ? '(本机)' : ''),
                 submenu: [
                     {

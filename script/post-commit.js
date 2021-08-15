@@ -11,7 +11,7 @@ exec('git show :package.json', (error, stdout, stderr) => {
             'git push && git push --tags',
             {stdio: [process.stdin, process.stdout, process.stderr]}
         );
-        // 如果家目录下有builder token 则自动构建并推送arm64架构的应用，其他架构使用github action release
+        // 如果家目录下有builder token 则自动构建并推送mac应用，其他架构使用github action release
         const github_token_path = path.join(process.env.HOME || process.env.USERPROFILE, '.electron_builder_github_token');
         if(!fse.existsSync(github_token_path)) return;
         console.log('[*] 开始构建 mac 应用');

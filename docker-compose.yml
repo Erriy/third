@@ -1,8 +1,9 @@
 version: "3"
 
 x-common: &common
-    ports:
-        - 5353:5353
+    # ports:
+    #     - 5353:5353
+    network_mode: host
     command: -p 5353 --enable-relay --provider
 
 services:

@@ -33,10 +33,10 @@ kns（key name system）主做类dns（domain name system）的基于pgp公钥�
 
 ``` jsonc
 {
-	// 指定record过期时间，不指定则为创建后5分钟过期，过期机制防止历史数据被恶意利用
-  "expire": "...", 
+  // 指定record过期时间，不指定则为创建后5分钟过期，过期机制防止历史数据被恶意利用
+  "expire": "...",
   // 附属子设备，可以不指定
-  "device": [], 
+  "device": [],
   // 服务地址，可以不指定
   "service": "http://xxxxx",
   // 是否提供kns查询和存储功能
@@ -48,10 +48,10 @@ kns（key name system）主做类dns（domain name system）的基于pgp公钥�
 
 ```jsonc
 {
-	// pubkey为pgp公钥数据，供验证signed部分签名是否正确
-	"pubkey": "...",
-	// signed为实际签名部分，对record的对象JSON序列化后的clearsign
-	"signed": "..."
+  // pubkey为pgp公钥数据，供验证signed部分签名是否正确
+  "pubkey": "...",
+  // signed为实际签名部分，对record的对象JSON序列化后的clearsign
+  "signed": "..."
 }
 ```
 
@@ -83,7 +83,7 @@ verify_expire-->|未超时| output
 
 ``` jsonc
 {
-		// 公钥
+    // 公钥
     "pubkey":"-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nxjMEYRY2BhYJKwYBBAHaRw8BAQdAkOqLs1eMpGDDEsXg220YLdm4ZSsLViZc\nB1vD4Wfw0kPNBXRoaXJkwowEEBYKAB0FAmEWNgYECwkHCAMVCAoEFgACAQIZ\nAQIbAwIeAQAhCRB/ULsrLsg+PxYhBBuBUCZT+khM+paIKn9QuysuyD4/VAwA\n/A2R51vmuELCaT7gZ4AAvY5czskvt7PCtysIBhtKSLN3AP9VN4Uy4pr6oofP\nl3/JwBpiHmrtZ6LxzfWs6acpUxtqCc44BGEWNgYSCisGAQQBl1UBBQEBB0C5\nZGUFsxcfZoUutRgEYIu/HuH83C8ubV3v0xFfCCJfHwMBCAfCeAQYFggACQUC\nYRY2BgIbDAAhCRB/ULsrLsg+PxYhBBuBUCZT+khM+paIKn9QuysuyD4/JV0B\nANw7XgMMf5sG9yD9EGHG6UNp6d/N0NGy7TrSUNLfG/5GAQDWNwkL+xcn14b5\nW8Z7BvWeqYimNz8Cd54Ggzjpb/bEBw==\n=uyqt\n-----END PGP PUBLIC KEY BLOCK-----\n",
     // 签名后的object对象
     "signed":"\n-----BEGIN PGP SIGNED MESSAGE-----\nHash: SHA512\n\n{\"service\":\"http://192.168.199.149:34105/\",\"expire\":1629693271.874}\n-----BEGIN PGP SIGNATURE-----\n\nwnUEARYKAAYFAmEZ/ZcAIQkQf1C7Ky7IPj8WIQQbgVAmU/pITPqWiCp/ULsr\nLsg+P8LrAPkBG747gXTJNS1LI9kQwlLLBAKT4prr5B0gExbh5/gz0QEAwgRR\nQgwzda5fudsFYogPhDMClHODhlnzabsN8he7XAk=\n=khc4\n-----END PGP SIGNATURE-----\n"
@@ -156,25 +156,25 @@ relay模块主做http请求中继功能（反向代理），类ngrok、frp的内
 
 ``` mermaid
 sequenceDiagram
-		participant ca as 客户端A
+    participant ca as 客户端A
     participant r as relay服务端
     participant k as kns服务器
-		participant cb as 客户端B
+    participant cb as 客户端B
     ca->>r: 请求服务器record
     activate r
     r-->>ca: 返回服务器record
     deactivate r
-    
+
     ca->r: 建立socket.io长连接通道
     ca->>r: 发送login消息<br>（携带签名并加密的aes256对象，<br>后续使用aes256对称加密传输数据）
     activate r
     r-->>ca: 返回登录成功，以及中继id(relayid)
     deactivate r
-    
+
     loop 周期性发布
     ca->>k: 发布record，record中的service为中继后的服务地址<br>（可能的service:http://third.on1y.net:5353/relay/${relayid}）
     end
-    
+
     cb->>k: 查询客户端A的record
     activate k
     k-->>cb: 返回客户端A的record
@@ -183,11 +183,11 @@ sequenceDiagram
     cb->>r: 提取客户端A的record中的service地址<br>向客户端A提交get /path请求<br>(get http://third.on1y.net:5353/relay/${relayid}/path)
     activate r
     r->>ca: 接收到请求，根据relayid得知要转发到客户端A
-   	activate ca
-   	ca-->>r: 接收到/path的请求，返回响应数据
-   	deactivate ca
-   	r-->>cb: 返回客户端A返回的数据
-   	deactivate r
+     activate ca
+     ca-->>r: 接收到/path的请求，返回响应数据
+     deactivate ca
+     r-->>cb: 返回客户端A返回的数据
+     deactivate r
 
 ```
 
@@ -197,14 +197,14 @@ sequenceDiagram
 
 ``` mermaid
 sequenceDiagram
-		participant ca as 客户端A
+    participant ca as 客户端A
     participant cb as 客户端B
-    
+
     ca->>cb: request:签名并加密请求数据，post /rpc
     note over cb: 解密并验证签名无误后，<br>调用处理函数，<br>获取函数结果，<br>将结果签名并加密
     cb-->>ca: response:将签名并加密的结果返回给请求端
 
-		note over ca: 解密并验证数据签名
+    note over ca: 解密并验证数据签名
 ```
 
 ### 2.4 account

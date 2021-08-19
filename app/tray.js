@@ -1,5 +1,6 @@
 const {app, BrowserWindow, Menu, Tray, clipboard, shell} = require('electron');
 const path = require('path');
+const log = require('electron-log');
 const engine = require('../lib');
 const runtime = require('./runtime');
 const update = require('./update');
@@ -79,8 +80,15 @@ async function refresh_account () {
 }
 
 async function refresh_device () {
+    if(!engine.account.status.login) return [];
+
+    log.debug(`[tray.refresh.device] 开始刷新设备信息，本机指纹：${engine.account.fingerprint}`);
     const can_change = await engine.account.have_prikey(engine.account.fingerprint);
+    log.debug(`[tray.refresh.device] 本机${!can_change ? '没' : ''}有签发能力`);
     const thisfpr = engine.runtime.key.getFingerprint().toUpperCase();
+    log.debug(`[tray.refresh.device] 本机指纹：${thisfpr}`);
+    const device_list = engine.account.device.list();
+    log.debug(`[tray.refresh.device] 账户下共有${device_list.length}个设备`);
     return [{
         label  : '我的设备',
         visible: engine.account.device.list().length > 0,
@@ -142,11 +150,17 @@ async function refresh () {
 
     // todo 临时不接受某些终端的同步/不发送给某些终端
     // todo 修改本机名称
-
+    log.info('[tray.refresh] 开始刷新托盘菜单');
+    const account = await refresh_account();
+    log.info('[tray.refresh] 刷新账户信息完成');
+    const device = await refresh_device();
+    log.info('[tray.refresh] 刷新设备信息完成');
+    const request = await refresh_request();
+    log.info('[tray.refresh] 刷新登录请求完成');
     const template = [
-        ... await refresh_account(),
-        ... await refresh_device(),
-        ... await refresh_request(),
+        ... account,
+        ... device,
+        ... request,
         {
             label: '打开配置文件',
             async click () {
@@ -179,6 +193,7 @@ async function refresh () {
     ];
 
     obj.tray.setContextMenu(Menu.buildFromTemplate(template));
+    log.info('[tray.refresh] 托盘菜单更新');
 }
 
 function init () {
@@ -191,7 +206,9 @@ function init () {
     engine.runtime.on('account.*', async ()=>{
         await refresh();
     });
+
     setImmediate(refresh);
+    log.info('[tray.init] 托盘处理程序初始化完成');
 }
 
 module.exports = {

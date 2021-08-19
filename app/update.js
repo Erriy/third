@@ -30,6 +30,7 @@ function init () {
         await check();
     });
     setImmediate(check);
+    log.info('[update.init] 更新模块初始化完成');
 }
 
 module.exports = {

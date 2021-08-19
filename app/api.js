@@ -3,6 +3,7 @@ const {
 } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const log = require('electron-log');
 
 function generate_channel (module, channel_prefix) {
     Object.keys(module)
@@ -32,6 +33,7 @@ function regist_api_modules (modules_path) {
 
 function init () {
     regist_api_modules(path.join(__dirname, 'api'));
+    log.info('[api.init] 提供给gui的api模块初始化完成');
 }
 
 module.exports = {

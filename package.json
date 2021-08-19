@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "private": true,
   "author": {
     "name": "erriy",
@@ -51,7 +51,6 @@
     "vue:serve": "vue-cli-service serve",
     "vue:build": "vue-cli-service build",
     "build": "vue-cli-service build && electron-builder",
-    "build:mac": "vue-cli-service build && electron-builder --mac",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "lint:staged": "lint-staged",

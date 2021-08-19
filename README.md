@@ -200,11 +200,11 @@ sequenceDiagram
     participant ca as 客户端A
     participant cb as 客户端B
 
-    ca->>cb: request:签名并加密请求数据，post /rpc
-    note over cb: 解密并验证签名无误后，<br>调用处理函数，<br>获取函数结果，<br>将结果签名并加密
-    cb-->>ca: response:将签名并加密的结果返回给请求端
+    ca->>cb: request:签名并加密请求数据，携带aes256加密密钥，post /rpc
+    note over cb: 解密并验证签名无误后，<br>调用处理函数，<br>获取函数结果
+    cb-->>ca: response:将结果和结果sha512一起使用aes256加密返回
 
-    note over ca: 解密并验证数据签名
+    note over ca: 解密并验证sha512是否正确
 ```
 
 ### 2.4 account

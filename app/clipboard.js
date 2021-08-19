@@ -1,4 +1,5 @@
 const {clipboard} = require('electron');
+const log = require('electron-log');
 const engine = require('../lib');
 
 const obj = {
@@ -72,6 +73,7 @@ function init () {
     });
 
     listen_clipboard_change();
+    log.info('[clipboard.init] 剪贴板同步模块初始化完成');
 }
 
 module.exports = {

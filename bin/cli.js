@@ -14,12 +14,16 @@ program
     .option('--provider', '支持kns存储查询服务', false)
     .action(async (opts) => {
         await engine.init({
-            database    : opts.database,
-            port        : opts.port,
-            mdns        : !opts.disableMdns,
-            bootstrap   : opts.bootstrap,
-            provider    : opts.provider,
-            enable_relay: opts.enableRelay
+            database : opts.database,
+            port     : opts.port,
+            mdns     : !opts.disableMdns,
+            relay    : opts.relay,
+            bootstrap: opts.bootstrap,
+            service  : {
+                kns  : opts.provider,
+                relay: opts.enableRelay,
+                mdns : !opts.disableMdns,
+            }
         });
     });
 

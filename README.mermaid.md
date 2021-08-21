@@ -139,7 +139,23 @@ kns（key name system）主做类 dns（domain name system）的基于 pgp 公�
 
 ##### 2.1.1.3 record 解析示例
 
-![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/jeSJqa_17_10_05.png)
+```mermaid
+graph LR
+
+input([获取record])
+verify_signed{{签名验证}}
+parse[反序列化record对象]
+verify_expire{{是否已超时}}
+output([返回解析结果])
+throw([抛出异常])
+
+input-->verify_signed
+verify_signed-->|通过| parse
+verify_signed-->|未通过| throw
+parse-->verify_expire
+verify_expire-->|超时| throw
+verify_expire-->|未超时| output
+```
 
 以下方 record 为例，解析过程如下：
 
@@ -168,11 +184,44 @@ mdns 功能主要做内网设备发现，在 mdns 功能启动的情况下，会
 
 - 发布流程（周期性发布，watchdog 机制，超时未喂狗则表示对方已下线，服务器会周期性清理 record）
 
-![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/n1TXSd_17_10_51.png)
+```mermaid
+graph LR
+
+record([要发布的记录])
+local_find_services[在本地服务器中查找距离最近的kns服务]
+check_history{{是否已访问过所有的临近服务器}}
+publish_to_service[向服务器发布record]
+find_neighbor[向服务器获取距离最近的十个其他服务器]
+return([单次发布流程完成])
+
+record-->local_find_services-->check_history
+check_history-->|否|publish_to_service-->find_neighbor-->local_find_services
+check_history-->|是|return
+```
 
 - 查询流程
 
-![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/pThfM5_17_11_27.png)
+```mermaid
+graph LR
+
+fpr([要查询的指纹])
+local_find{{本地数据库中是否存在记录}}
+local_find_services[在本地服务器中查找距离最近的kns服务]
+check_history{{是否已访问过所有的临近服务器}}
+get_from_service[向服务器查询record]
+find_neighbor[获取距离最近的服务]
+return_null([返回找不到结果])
+return([返回解析的结果])
+
+fpr-->local_find
+local_find-->|不存在|local_find_services
+local_find_services-->check_history
+check_history-->|否|get_from_service
+get_from_service-->find_neighbor
+find_neighbor-->local_find
+local_find-->|找到结果|return
+check_history-->|是|return_null
+```
 
 #### 2.1.4 工作流程
 
@@ -186,13 +235,58 @@ relay 模块主做 http 请求中继功能（反向代理），类 ngrok、frp �
 
 以下时序图演示的是 relay 工作流程
 
-![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/aALiIr_17_11_54.png)
+```mermaid
+sequenceDiagram
+    participant ca as 客户端A
+    participant r as relay服务端
+    participant k as kns服务器
+    participant cb as 客户端B
+    ca->>r: 请求服务器record
+    activate r
+    r-->>ca: 返回服务器record
+    deactivate r
+
+    ca->r: 建立socket.io长连接通道
+    ca->>r: 发送login消息<br>（携带签名并加密的aes256对象，<br>后续使用aes256对称加密传输数据）
+    activate r
+    r-->>ca: 返回登录成功，以及中继id(relayid)
+    deactivate r
+
+    loop 周期性发布
+    ca->>k: 发布record，record中的service为中继后的服务地址<br>（可能的service:http://third.on1y.net:5353/relay/${relayid}）
+    end
+
+    cb->>k: 查询客户端A的record
+    activate k
+    k-->>cb: 返回客户端A的record
+    deactivate k
+
+    cb->>r: 提取客户端A的record中的service地址<br>向客户端A提交get /path请求<br>(get http://third.on1y.net:5353/relay/${relayid}/path)
+    activate r
+    r->>ca: 接收到请求，根据relayid得知要转发到客户端A
+     activate ca
+     ca-->>r: 接收到/path的请求，返回响应数据
+     deactivate ca
+     r-->>cb: 返回客户端A返回的数据
+     deactivate r
+
+```
 
 ### 2.3 rpc
 
 基于 http 做的 rpc 调用，方便设备间访问，流程如下
 
-![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/cTftqr_17_12_35.png)
+```mermaid
+sequenceDiagram
+    participant ca as 客户端A
+    participant cb as 客户端B
+
+    ca->>cb: request:签名并加密请求数据，携带aes256加密密钥，post /rpc
+    note over cb: 解密并验证签名无误后，<br>调用处理函数，<br>获取函数结果
+    cb-->>ca: response:将结果和结果sha512一起使用aes256加密返回
+
+    note over ca: 解密并验证sha512是否正确
+```
 
 ### 2.4 account
 
@@ -202,11 +296,56 @@ relay 模块主做 http 请求中继功能（反向代理），类 ngrok、frp �
 
 ### 2.4.1 登录逻辑
 
-![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/5VfEkQ_17_13_05.png)
+```mermaid
+graph TD
+
+keyid([输入keyid])
+lookup{{根据keyid查找指纹<br>1.kns中查询<br>2.gpg中查询<br>3.keyserver查询}}
+check_fingerprint{{提醒用户指纹确认是否正确}}
+check_prikey{{调用gpg查看本地是否拥有私钥<br>确认是否具有签发能力}}
+get_record{{查询是否存在账户记录}}
+get_record_1{{查询是否存在账户记录}}
+local_sign_and_publish[将本机指纹加入device列表<br>本地签名并发布<br>发布到kns服务器和其他设备]
+local_sign_and_publish_1[将本机指纹加入device列表<br>本地签名并发布<br>发布到kns服务器]
+rpc_login_request{{向其他已登录客户端提交登录请求}}
+allow_login{{其他客户端对登录请求进行确认}}
+failed([登录失败])
+success([登录成功])
+
+keyid-->lookup-->|找到指纹|check_fingerprint-->|确认|check_prikey-->|有签名能力|get_record-->|找到结果|local_sign_and_publish-->success
+get_record-->|未找到结果|local_sign_and_publish_1-->success
+check_prikey-->|无签名能力|get_record_1-->|找到结果|rpc_login_request-->|成功|allow_login-->|允许,将设备加入device列表并发布record|success
+rpc_login_request-->|无设备在线|failed
+allow_login-->|不允许|failed
+get_record_1-->|未找到结果|failed
+lookup-->|未找到指纹|failed
+check_fingerprint-->|指纹不正确|failed
+```
 
 ### 2.4.2 以 clipboard 同步来解释 account 工作原理
 
-![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/2Dq17B_17_13_40.png)
+```mermaid
+graph TD
+cb_change([剪贴板内容变动])
+list_device{{查找账户下的设备}}
+find_other_record{{查找其他设备的record}}
+check_local_service{{是否在相同网络}}
+local_send_rpc{{本地发送rpc请求<br>设置新的剪贴板内容}}
+clear_local_service[删除本地地址记录]
+check_service{{检查是否有service字段}}
+service_send_rpc{{对service发送rpc请求}}
+success([同步成功])
+failed([同步失败])
+
+cb_change-->list_device-->|存在其他设备<br>对每个设备进行并发执行后续操作|find_other_record-->|找到记录|check_local_service-->|是|local_send_rpc-->|本地请求成功|success
+local_send_rpc-->|本地请求失败|clear_local_service-->check_service
+check_local_service-->|否|check_service
+check_service-->|有|service_send_rpc-->|请求成功|success
+service_send_rpc-->|发送失败|failed
+check_service-->|没有|failed
+find_other_record-->|没找到记录|failed
+list_device-->|没有其他设备|failed
+```
 
 ## 3. 目前支持功能
 

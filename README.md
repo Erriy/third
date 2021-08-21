@@ -2,23 +2,108 @@
 
 基于**kns[地址解析]-relay[内网穿透]-rpc[远程调用]**的去中心化的类icloud账号通讯体系
 
-## 0. 必要的知识
+> 我的公钥：[46C8 3280 1B39 E4EB 61DE  615E 699A 698E 7777 7777](https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x46c832801b39e4eb61de615e699a698e77777777)
 
-待编辑
+## 0. 相关知识
 
-### pgp
-
-#### yubikey
+- pgp
+  - gpg([阮一峰 GPG入门教程](http://www.ruanyifeng.com/blog/2013/07/gpg.html))
+  - [openpgpjs](https://github.com/openpgpjs/openpgpjs)
+- [gpg smartcard](https://wiki.gnupg.org/SmartCard)
+  - yubikey
+    - [开启触摸保护](https://iamtwz.gitbooks.io/yubikey-handbook-chinese/content/openpgp/touch-protection/)
 
 ## 1. 使用方法
 
 ### 1.1 应用使用说明
 
-### 1.2 代码使用说明
+>  **请自行确保本机已安装gpg套件**
+>
+> - windows: [gpg4win](https://www.gpg4win.org/)
+> - macOS: [gpg suite](https://gpgtools.org/)
+> - linux：一般默认安装
+
+- 打开[应用下载页面](https://github.com/Erriy/third/releases/latest)下载应用，安装
+- 运行应用后，托盘中会出现本应用图标
+
+![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/I3enaP_13_55_55.png)
+
+- 点击登录，弹出账户登录页面
+
+  > 注意：
+  >
+  > - 第一个设备登录时，本机必须有这个gpg的私钥，确定能签名数据。
+  > - 第二个设备登录时，如果本机依然有私钥，则可以直接本机签名登录，否则会向已登录的设备发送登录请求，已登录且能使用key签名的设备会在菜单中显示登录请求，允许后即完成登录。
+
+  - 登录页面：（如果本机有签名能力则直接登录成功）
+
+  ![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/2jyQiL_14_00_12.png)
+
+  - 允许登录：（如果第二个登录设备没有签名能力，则有签名能力的设备允许登录后会登录成功）
+
+  ![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/EpaXf7_14_21_27.png)
+
+- 确定后会调用gpg进行签名登录信息操作，完成后即登录完成
+
+![](https://raw.githubusercontent.com/Erriy/pics/main/2021_08_21/tun6ad_14_01_25.png)
 
 
 
-待编辑
+### 1.2 docker启动
+
+> 注意，只有服务器建议docker启动，提供kns和relay服务
+>
+> 剪贴板、账户系统都在electron部分代码中，docker中不会启动此部分代码
+
+- docker 直接启动服务
+
+  ``` shell
+  # 因为需要获取本机真实ip，所以net指定为host模式
+  docker run -d --net=host erriy/third --port 5353 --provider --enable-relay
+  ```
+
+- docker-compose 启动
+
+  ``` shell
+  # 拉取预构筑镜像启动
+  docker-compose up --build third-image
+  # 本地构建启动
+  docker-compose up --build third-build
+  ```
+
+### 1.3 代码使用说明
+
+- 下载并安装依赖包
+
+  ``` shell
+  git clone https://github.com/Erriy/third
+  ```
+
+- 安装依赖包
+
+  ``` shell
+  # 在源代码根目录执行
+  npm install
+  ```
+
+- 启动ui界面服务，页面使用vue编写
+
+  ``` shell
+  npm run vue:serve
+  ```
+
+- 启动electron 应用（ui显示部分依赖vue，建议启动完vue:serve后再启动）
+
+  ``` shell
+  # 在windows下可能存在中文输出乱码，使用 chcp 65001 命令切换shell编码后即可正常显示中文
+  npm run electron:serve
+  ```
+
+- 打包应用（打包完成后在dist文件夹中）
+
+  ``` shell
+  npm run build
+  ```
 
 ## 2. 原理
 
@@ -286,10 +371,10 @@ list_device-->|没有其他设备|failed
 
 ## 6. todo
 
+- [ ] 设备别名
 - [ ] clipboard 同步加强
   - [ ] 文件跨设备拷贝
   - [ ] 截图拷贝
-- [ ] 设备别名
 - [ ] 设备远程控制
 - [ ] 插件体系/暴露本机接口的扩展
 - [ ] 账户间通信

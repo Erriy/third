@@ -1,4 +1,4 @@
-const { dialog } = require('electron');
+const { app, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const schedule = require('node-schedule');
 const log = require('electron-log');
@@ -21,6 +21,10 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 async function check () {
+    if(!app.isPackaged) {
+        log.info('[update.check] 未打包应用，不进行更新操作');
+        return;
+    }
     await autoUpdater.checkForUpdates();
 }
 

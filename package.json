@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "author": {
     "name": "erriy",
@@ -29,7 +29,7 @@
           "x64",
           "arm64"
         ],
-        "target": "zip"
+        "target": "dmg"
       }
     },
     "nsis": {
@@ -50,7 +50,7 @@
   },
   "scripts": {
     "electron:serve": "cross-env DEBUG=true electron ./app/main.js",
-    "electron:build": "electron-builder",
+    "electron:build": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder",
     "vue:serve": "vue-cli-service serve",
     "vue:build": "vue-cli-service build",
     "build": "vue-cli-service build && electron-builder",

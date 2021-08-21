@@ -13,9 +13,9 @@ autoUpdater.on('update-downloaded', () => {
         message  : '新版本已下载完成，点击确定安装更新，取消则应用退出时自动安装',
         buttons  : ['确定', '取消'],
         defaultId: 0,
-    }).then((button_id) => {
-        if(button_id === 0) {
-            setImmediate(() => autoUpdater.quitAndInstall());
+    }).then((r) => {
+        if(r.response === 0) {
+            autoUpdater.quitAndInstall();
         }
     });
 });

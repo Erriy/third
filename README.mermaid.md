@@ -1,6 +1,6 @@
 # third
 
-基于**kns[地址解析]-relay[内网穿透]-rpc[远程调用]**的去中心化的类 icloud 账号通讯体系
+基于**kns\[地址解析\]-relay\[内网穿透\]-rpc\[远程调用\]**的去中心化的类 icloud 账号通讯体系
 
 > 我的公钥：[46C8 3280 1B39 E4EB 61DE 615E 699A 698E 7777 7777](https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x46c832801b39e4eb61de615e699a698e77777777)
 

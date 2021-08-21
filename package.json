@@ -142,7 +142,7 @@
     "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
     "commit-msg": "commitlint -E GIT_PARAMS",
     "pre-commit": "npm run lint:staged",
-    "post-commit": "node script/post-commit.js"
+    "pre-push": "node script/pre-push.js"
   },
   "homepage": "https://github.com/Erriy/third#readme",
   "license": "MIT",

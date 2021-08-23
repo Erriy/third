@@ -117,6 +117,10 @@ kns（key name system）主做类 dns（domain name system）的基于 pgp 公�
 {
   // 指定record过期时间，不指定则为创建后5分钟过期，过期机制防止历史数据被恶意利用
   "expire": "...",
+  // 设备名称
+  "name": "xxx",
+  // 本设备所属的上级指纹
+  "belong": "fingerprint"
   // 附属子设备，可以不指定
   "device": [],
   // 服务地址，可以不指定

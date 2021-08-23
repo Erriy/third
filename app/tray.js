@@ -92,10 +92,13 @@ async function refresh_device () {
     return [{
         label  : '我的设备',
         visible: engine.account.device.list().length > 0,
-        submenu: engine.account.device.list().map(f=>{
+        submenu: (await Promise.all(engine.account.device.list().map(async f=>{
+            const d = await engine.kns.get(f, {discover: true});
+            if(!d) return undefined;
+            const o = JSON.parse(d.text);
             return {
                 // todo 显示设备在线状态
-                label  : f.slice(24) + (f === thisfpr ? '(本机)' : ''),
+                label  : f.slice(24) + `[${o.name || '未命名'}]`,
                 submenu: [
                     {
                         label: '复制',
@@ -118,7 +121,7 @@ async function refresh_device () {
                     // },
                 ]
             };
-        })
+        }))).filter(i=>(i))
     }];
 }
 

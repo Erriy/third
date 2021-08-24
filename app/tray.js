@@ -1,4 +1,4 @@
-const {app, BrowserWindow, Menu, Tray, clipboard, shell} = require('electron');
+const {app, BrowserWindow, Menu, Tray, clipboard, shell, dialog} = require('electron');
 const path = require('path');
 const log = require('electron-log');
 const engine = require('../lib');
@@ -50,36 +50,38 @@ function create_login_window () {
 }
 
 async function refresh_account () {
-    // 未进行登录操作
-    if(!engine.account.status.login) {
-        return [{
-            label: '登录',
-            click: ()=>{
-                create_login_window();
-            }
-        }];
-    }
-    // 等待登录结果
-    return [{
-        label  : engine.account.fingerprint.slice(24) + (engine.account.status.wait ? '(请求中)' : ''),
-        submenu: [
-            {
-                label: '复制',
-                click () {
-                    clipboard.writeText(engine.account.fingerprint);
+    const login_fpr = engine.account.fingerprint;
+
+    return [
+        {
+            label  : login_fpr.slice(24) + (engine.account.status.wait ? '(请求中)' : ''),
+            submenu: [
+                {
+                    label: '复制指纹',
+                    click () {
+                        clipboard.writeText(login_fpr);
+                    }
+                },
+                {
+                    label  : '退出',
+                    visible: login_fpr !== engine.runtime.key.getFingerprint().toUpperCase(),
+                    async click () {
+                        await engine.account.logout();
+                    }
+                },
+                {
+                    label  : '登录其他账号',
+                    visible: login_fpr === engine.runtime.key.getFingerprint().toUpperCase(),
+                    click () {
+                        create_login_window();
+                    }
                 }
-            },
-            {
-                label: '退出',
-                async click (){
-                    await engine.account.logout();
-                }
-            },
-        ]
-    }];
+            ]
+        }
+    ];
 }
 
-async function refresh_device () {
+async function refresh_account_device () {
     if(!engine.account.status.login) return [];
 
     log.debug(`[tray.refresh.device] 开始刷新设备信息，本机指纹：${engine.account.fingerprint}`);
@@ -125,9 +127,53 @@ async function refresh_device () {
     }];
 }
 
+async function refresh_local_device () {
+    const device_list = engine.account.device.list();
+    const thisfpr = engine.runtime.key.getFingerprint().toUpperCase();
+    return [{
+        label  : '本地设备',
+        submenu: (await engine.kns.local()).map(r=>{
+            // 账户下设备，归类到账户设备中
+            if(-1 !== device_list.indexOf(r.fingerprint)) return undefined;
+            // 不显示本机
+            if(r.fingerprint === thisfpr) return undefined;
+
+            const o = JSON.parse(r.text);
+
+            return {
+                label  : r.fingerprint.slice(24) + `[${o.name || '未命名'}]`,
+                submenu: [
+                    {
+                        label: '复制',
+                        click () {
+                            clipboard.writeText(r.fingerprint);
+                        }
+                    },
+                    {
+                        label: '登录到这个设备账号下',
+                        click () {
+                            // todo 向这个设备发送登录请求
+                            dialog.showMessageBox({
+                                title    : '登录确认',
+                                message  : `确定要登录到设备【${r.fingerprint}】所属的账户【${o.belong}】下吗？`,
+                                buttons  : ['确定', '取消'],
+                                defaultId: 0,
+                            }).then(async (_) => {
+                                if(_.response === 0) {
+                                    await engine.account.login(r.fingerprint);
+                                }
+                            });
+                        }
+                    },
+                ]
+            };
+        }).filter(i=>(i))
+    }];
+}
+
 async function refresh_request () {
     // 没有管理权限，则直接返回
-    if(!await engine.account.have_prikey(engine.account.fingerprint)) return [];
+    if(!await engine.account.have_prikey()) return [];
     // 有管理权限但是没有登录请求，则返回空
     const requests = await engine.account.request.list();
     if(requests.length === 0) return [];
@@ -156,13 +202,15 @@ async function refresh () {
     log.info('[tray.refresh] 开始刷新托盘菜单');
     const account = await refresh_account();
     log.info('[tray.refresh] 刷新账户信息完成');
-    const device = await refresh_device();
-    log.info('[tray.refresh] 刷新设备信息完成');
+    const accoun_device = await refresh_account_device();
+    log.info('[tray.refresh] 刷新账户下设备信息完成');
+    const local_device = await refresh_local_device();
     const request = await refresh_request();
     log.info('[tray.refresh] 刷新登录请求完成');
     const template = [
         ... account,
-        ... device,
+        ... accoun_device,
+        ... local_device,
         ... request,
         {
             label: '打开配置文件',
@@ -209,6 +257,9 @@ function init () {
     engine.runtime.on('account.*', async ()=>{
         await refresh();
     });
+    engine.runtime.on('kns.device.local', async ()=>{
+        await refresh();
+    }),
 
     setImmediate(refresh);
     log.info('[tray.init] 托盘处理程序初始化完成');

@@ -5,7 +5,6 @@ const engine = require('../lib');
 const runtime = require('./runtime');
 const tray = require('./tray');
 const update = require('./update');
-const api = require('./api');
 const clipboard = require('./clipboard');
 
 if(process.platform === 'darwin') {
@@ -26,7 +25,6 @@ app.on('ready', ()=>{
         logger   : log,
     }).then(async ()=>{
         tray.init();
-        api.init();
         update.init();
         clipboard.init();
     }).catch(e=>{

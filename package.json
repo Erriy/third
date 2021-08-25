@@ -1,6 +1,6 @@
 {
   "name": "third",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "private": true,
   "author": {
     "name": "erriy",
@@ -38,12 +38,6 @@
       "runAfterFinish": true
     },
     "files": [
-      "dist/css",
-      "dist/fonts",
-      "dist/img",
-      "dist/js",
-      "dist/index.html",
-      "dist/favicon.ico",
       "app",
       "lib"
     ]
@@ -51,9 +45,7 @@
   "scripts": {
     "electron:serve": "cross-env DEBUG=true electron ./app/main.js",
     "electron:build": "electron-builder",
-    "vue:serve": "vue-cli-service serve",
-    "vue:build": "vue-cli-service build",
-    "build": "vue-cli-service build && electron-builder",
+    "build": "electron-builder",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "lint:staged": "lint-staged",
@@ -61,11 +53,8 @@
   },
   "main": "app/main.js",
   "dependencies": {
-    "ant-design-vue": "^1.7.6",
     "axios": "^0.21.1",
-    "command-exists": "^1.2.9",
     "commander": "^8.1.0",
-    "core-js": "^3.6.5",
     "cz-conventional-changelog": "^3.3.0",
     "default-gateway": "^6.0.3",
     "electron-log": "^4.4.1",
@@ -83,16 +72,11 @@
     "sqlite": "^4.0.23",
     "sqlite3": "^5.0.2",
     "url-join": "^4.0.1",
-    "uuid": "^3.4.0",
-    "vue": "^2.6.11",
-    "vue-router": "^3.5.2"
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
     "@commitlint/config-angular": "^12.1.4",
     "@types/mocha": "^8.2.2",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
@@ -107,7 +91,6 @@
     "lint-staged": "^11.0.0",
     "mocha": "^9.0.0",
     "prettier": "^2.3.1",
-    "vue-template-compiler": "^2.6.11",
     "yorkie": "^2.0.0"
   },
   "eslintConfig": {
@@ -129,7 +112,6 @@
     "last 2 versions",
     "not dead"
   ],
-  "_id": "third@0.0.6",
   "bugs": {
     "url": "https://github.com/Erriy/third/issues"
   },

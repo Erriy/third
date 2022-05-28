@@ -61,7 +61,7 @@
     "electron-store": "^8.0.0",
     "electron-updater": "^4.3.9",
     "express": "^4.17.1",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
     "gpg": "^0.6.0",
     "multicast-dns": "^7.2.3",
     "node-schedule": "^2.0.0",
